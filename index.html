@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Working Time Tracker</title>
+
+<!-- ===================================== -->
+<!--               CSS START               -->
+<!-- ===================================== -->
+
+  <style>
+    :root {
+      --bg-color: #f4f4f4;
+      --card-bg: #ffffff;
+      --text-color: #222222;
+      --subtext-color: #555555;
+      --accent-color: #0078ff;
+      --button-text: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --border-color: #e0e0e0;
+
+      --btn-secondary-bg: rgba(0,0,0,0.05);
+      --btn-secondary-border: #d0d0d0;
+
+      --toggle-bg: #d0d0d0;
+      --toggle-thumb: #ffffff;
+
+      --break-banner-bg: #78f872;
+      --break-banner-text: #000000;
+
+      --green-ok: #2e7d32;
+      --yellow-warn: #f9a825; 
+      --red-danger: #e53935; 
+      --green-ok-dark: #2e7d32;
+      --yellow-warn-dark: #f9a825; 
+      --red-danger-dark: #e53935;
+    }
+
+    :root.dark {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e6e6e6;
+      --subtext-color: #aaaaaa;
+      --accent-color: #116ecb;
+      --button-text: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+      --border-color: #333333;
+
+      --btn-secondary-bg: rgba(255,255,255,0.06);
+      --btn-secondary-border: #444444;
+
+      --toggle-bg: #444444;
+      --toggle-thumb: #1e1e1e;
+
+      --break-banner-bg: #74e06f;
+      --break-banner-text: #000000;
+
+      --green-ok: #81c784;
+      --yellow-warn: #ffd54f; 
+      --red-danger: #e53935;
+    }
+
+    * { box-sizing: border-box; }
+
+    /* Light mode: active break button slightly darker */
+    .active-break {
+      filter: brightness(0.50);
+    }
+
+    /* Dark mode: active break button slightly lighter */
+    .dark .active-break {
+      filter: brightness(1.50);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: background 0.2s ease, color 0.2s ease;
+
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .theme-toggle {
+      width: 48px;
+      height: 24px;
+      background: var(--toggle-bg);
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle-thumb {
+      width: 22px;
+      height: 22px;
+      background: var(--toggle-thumb);
+      border-radius: 50%;
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: left 0.25s ease, background 0.25s ease;
+    }
+
+    .theme-toggle.dark .toggle-thumb {
+      left: 25px;
+    }
+
+    .card {
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px;
+      background: var(--card-bg);
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      border: 1px solid var(--border-color);
+      transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .label {
+      font-weight: 600;
+      margin-top: 6px;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: var(--subtext-color);
+    }
+
+    .label-heading {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    .value {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      word-spacing: 2px;
+    }
+
+    .big-number {
+      font-size: 40px;
+      font-weight: 700;
+      margin: 0 0 0 0;
+      text-align: center;
+    }
+
+    .subtext {
+      font-size: 14px;
+      color: var(--subtext-color);
+      margin-bottom: 2px;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      padding: 10px 14px;
+      font-size: 15px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      flex: 1 1 30%;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      white-space: nowrap;
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    button:active {
+      transform: scale(0.97);
+      box-shadow: 0 1px 3px var(--shadow-color);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+      filter: grayscale(40%);
+    }
+
+    .btn-primary {
+      background: var(--accent-color);
+      color: var(--button-text);
+    }
+
+    .btn-secondary {
+      background: var(--btn-secondary-bg);
+      color: var(--text-color);
+      border: 1px solid var(--btn-secondary-border);
+    }
+
+    .good { color: var(--green-ok); }
+    .warning { color: var(--yellow-warn); }
+    .danger { color: var(--red-danger); }
+
+    .break-banner {
+      background: var(--break-banner-bg);
+      color: var(--break-banner-text);
+      padding: 10px;
+      text-align: center;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    .break-ok {
+      color: var(--green-ok);
+    }
+
+    .break-low {
+      color: var(--red-danger);
+    }
+
+    .timer-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pause-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      vertical-align: -3px;
+      margin-right: 6px;
+      background: #ffffff;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .pause-icon::before,
+    .pause-icon::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      width: 4px;
+      background: #000; /* pause lines */
+      border-radius: 2px;
+    }
+
+    .pause-icon::before {
+      left: 4px;
+    }
+
+    .pause-icon::after {
+      right: 4px;
+    }
+
+    .time-grid {
+      display: flex;
+      justify-content: center;
+      flex-direction: row;
+      gap: 24px;
+    }
+
+    .time-col {
+      flex: 1;
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .time-col .label {
+      font-size: 15px;
+    }
+
+    .time-col .value {
+      font-size: 26px;
+    }
+
+    .end-shift {
+      background: #e53935;
+      color: #fff;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background: var(--card-bg-alt, #e0e0e0);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-color, #0078ff);
+      transition: width 0.4s ease;
+    }
+
+    .progress-markers {
+      position: relative;
+      width: 100%;
+      height: 16px;
+      margin-top: 4px;
+    }
+
+    .progress-markers span {
+      position: absolute;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--subtext-color);
+      top: 0;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .progress-container {
+      position: relative;
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #0078ff;
+      transition: width 0.4s ease;
+    }
+
+    .progress-splits {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .progress-splits span {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: #888;
+      transform: translateX(-0.5px);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      color: var(--text-color);
+      padding: 20px;
+      border-radius: 12px;
+      width: 85%;
+      max-width: 360px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 10px;
+      margin: 0 6px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .modal-btn.cancel {
+      background: #ccc;
+      color: #000;
+    }
+
+    .modal-btn.confirm {
+      background: #d9534f;
+      color: #fff;
+    }
+
+    .break-timer-red {
+      color: var(--red-danger);
+    }
+
+    .break-timer-green {
+      color: var(--green-ok);
+    }
+
+    .info-btn {
+      background: var(--btn-secondary-bg);
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 14px;
+      font-weight: 700;
+      flex: 0 0 auto; /* prevents flex stretching */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .label-heading-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 0;
+    }
+
+    .label-heading {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .break-req-green {
+      color: var(--green-ok);
+    }
+
+    .break-req-red {
+      color: var(--red-danger);
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+    <header>
+      <h2>Working Time Tracker</h2>
+
+      <div id="themeToggle" class="theme-toggle">
+        <div class="toggle-thumb">🌙</div>
+      </div>
+    </header>
+
+    <div id="breakBanner" class="break-banner" style="display:none;">
+      <span class="pause-icon"></span> Break in progress
+    </div>
+
+    <div class="card">
+      <div class="button-row">
+        <button id="startShiftBtn" class="btn-primary">Start Shift</button>
+        <button id="startBreakBtn" class="btn-secondary">Start Break</button>
+        <button id="endBreakBtn" class="btn-secondary" disabled>End Break</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label-heading-row">
+        <div class="label-heading">Break Requirement</div>
+        <button id="breakInfoBtn" class="info-btn">i</button>
+      </div>
+      <div class="subtext">Before the end of your shift, you must take a TOTAL break of:</div>
+      <div id="breakRequirementNumber" class="big-number">0 minutes</div>
+    </div>
+
+    <div class="card">
+      <div class="time-grid">
+        <div class="time-col">
+          <div class="label">Since shift start</div>
+          <div class="value" id="elapsed">00:00:00</div>
+
+          <div class="label">Current break</div>
+          <div class="value" id="currentBreak">00:00:00</div>
+        </div>
+
+        <div class="time-col">
+          <div class="label">Since last break</div>
+          <div class="value" id="sinceLastBreak">00:00:00</div>
+          
+          <div class="label">Total break time</div>
+          <div class="value" id="breakTaken">00:00:00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="time-grid">
+
+        <div class="time-col">
+          <div class="label">Time until <strong>6 hours</strong></div>
+          <div class="value" id="sixHour">00:00:00</div>
+
+          <div class="label">Time until <strong>12 hours</strong></div>
+          <div class="value" id="twelveHour">00:00:00</div>
+        </div>
+
+        <div class="time-col">
+          <div class="label">Time until <strong>9 hours</strong></div>
+          <div class="value" id="nineHour">00:00:00</div>
+
+          <div class="label">Time until <strong>15 hours</strong></div>
+          <div class="value" id="fifteenHour">00:00:00</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-splits">
+        <span style="left: 20%;"></span>  <!-- 3h -->
+        <span style="left: 40%;"></span>  <!-- 6h -->
+        <span style="left: 60%;"></span>  <!-- 9h -->
+        <span style="left: 80%;"></span>  <!-- 12h -->
+      </div>
+      <div class="progress-bar" id="shiftProgress"></div>
+    </div>
+
+    <div class="progress-markers">
+      <span style="left: 0%;">0h</span>
+      <span style="left: 20%;">3h</span>
+      <span style="left: 40%;">6h</span>
+      <span style="left: 60%;">9h</span>
+      <span style="left: 80%;">12h</span>
+      <span style="left: 100%;">15h</span>
+    </div>
+
+    <div id="endShiftModal" class="modal-overlay">
+      <div class="modal">
+        <h2>End shift</h2>
+        <p>This will clear all timers. Are you sure?</p>
+
+        <div class="modal-buttons">
+          <button id="cancelEndShift" class="modal-btn cancel">Cancel</button>
+          <button id="confirmEndShift" class="modal-btn confirm">End shift</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="breakInfoModal" class="modal-overlay">
+      <div class="modal">
+        <h2>Break Information</h2>
+
+        <p>Only breaks of <strong>15 minutes or more</strong> are counted toward your required break time.</p>
+
+        <h3>Break Thresholds</h3>
+        <ul style="text-align:left; padding-left:20px;">
+          <li><strong>0–3 hours:</strong> No break required</li>
+          <li><strong>3–6 hours:</strong> 15 minutes</li>
+          <li><strong>6–9 hours:</strong> 30 minutes</li>
+          <li><strong>9+ hours:</strong> 45 minutes</li>
+        </ul>
+
+        <div class="modal-buttons">
+          <button id="closeBreakInfo" class="modal-btn cancel">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+<!-- ===================================== -->
+<!--            JAVASCRIPT START           -->
+<!-- ===================================== -->
+
+<script>
+(function () {
+  // THEME TOGGLE
+  const root = document.documentElement;
+  const toggle = document.getElementById("themeToggle");
+  const thumb = toggle.querySelector(".toggle-thumb");
+
+  function applyTheme(theme) {
+    if (theme === "dark") {
+      root.classList.add("dark");
+      toggle.classList.add("dark");
+      thumb.textContent = "🔆";
+    } else {
+      root.classList.remove("dark");
+      toggle.classList.remove("dark");
+      thumb.textContent = "🌙";
+    }
+    localStorage.setItem("wtdTheme", theme);
+  }
+
+  const savedTheme = localStorage.getItem("wtdTheme") || "light";
+  applyTheme(savedTheme);
+
+  toggle.addEventListener("click", () => {
+    const current = root.classList.contains("dark") ? "dark" : "light";
+    applyTheme(current === "dark" ? "light" : "dark");
+  });
+
+  // STATE
+  let startTime = Number(localStorage.getItem("shiftStartTime")) || null;
+  let breakLog = JSON.parse(localStorage.getItem("breakLog") || "[]");
+  let currentBreakStart = Number(localStorage.getItem("currentBreakStart")) || null;
+
+  // Filter out short breaks from stored log
+  breakLog = breakLog.filter(b => (b.end - b.start) >= 15 * 60 * 1000);
+  localStorage.setItem("breakLog", JSON.stringify(breakLog));
+
+  let timerInterval = null;
+
+  // UI HELPERS
+  function updateBreakButtons() {
+    const startBtn = document.getElementById("startBreakBtn");
+    const endBtn = document.getElementById("endBreakBtn");
+    const banner = document.getElementById("breakBanner");
+
+    if (!startTime) {
+      startBtn.disabled = true;
+      endBtn.disabled = true;
+      banner.style.display = "none";
+      return;
+    }
+
+    if (currentBreakStart) {
+      startBtn.disabled = true;
+      endBtn.disabled = false;
+
+      startBtn.classList.remove("active-break");
+      endBtn.classList.add("active-break");
+
+      banner.style.display = "block";
+    } else {
+      startBtn.disabled = false;
+      endBtn.disabled = true;
+
+      startBtn.classList.add("active-break");
+      endBtn.classList.remove("active-break");
+
+      banner.style.display = "none";
+    }
+  }
+
+  function formatHMS(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+    const s = String(totalSeconds % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  }
+
+  function calculateCurrentBreak(now) {
+    if (!currentBreakStart) return 0;
+    return now - currentBreakStart;
+  }
+
+  function calculateBreakTaken() {
+    let total = 0;
+    breakLog.forEach(b => total += (b.end - b.start));
+    return total;
+  }
+
+  function calculateTimeSinceLastBreak(now) {
+    if (breakLog.length > 0) {
+      const last = breakLog[breakLog.length - 1];
+      return now - last.end;
+    }
+    if (!startTime) return 0;
+    return now - startTime;
+  }
+
+  // BREAK REQUIREMENT LOGIC
+  function getBreakRequirementMinutes(elapsedMs) {
+    const h = elapsedMs / 3600000;
+
+    if (h <= 3) return 0;       // 0–3h → no break required
+    if (h <= 6) return 15;      // 3–6h → 15 minutes
+    if (h <= 9) return 30;      // 6–9h → 30 minutes
+    return 45;                  // 9h+ → 45 minutes
+  }
+
+  // PROGRESS BAR FUNCTION
+  function updateShiftProgress(elapsedMs) {
+    const maxMs = 15 * 3600000; // 15 hours
+    const pct = Math.min((elapsedMs / maxMs) * 100, 100);
+    document.getElementById("shiftProgress").style.width = pct + "%";
+  }
+
+  function startTimers() {
+    if (timerInterval) clearInterval(timerInterval);
+
+    timerInterval = setInterval(() => {
+      if (!startTime) return;
+
+      const now = Date.now();
+      const elapsedMs = now - startTime;
+
+      // update progress bar
+      updateShiftProgress(elapsedMs);
+
+      // Time since shift start
+      document.getElementById("elapsed").textContent = formatHMS(elapsedMs);
+
+      // CURRENT BREAK
+      const currentBreakMs = calculateCurrentBreak(now);
+      const currentBreakEl = document.getElementById("currentBreak");
+
+      // Update the displayed time
+      currentBreakEl.textContent = formatHMS(currentBreakMs);
+
+      // Reset classes first
+      currentBreakEl.classList.remove("break-timer-red", "break-timer-green");
+
+      // 00:00:00 → default colour
+      if (currentBreakMs === 0) {
+      }
+      // 0:00:01 → 14:59 → red
+      else if (currentBreakMs < 15 * 60 * 1000) {
+        currentBreakEl.classList.add("break-timer-red");
+      }
+      // 15:00+ → green
+      else {
+        currentBreakEl.classList.add("break-timer-green");
+      }
+
+      // TOTAL BREAK TAKEN
+      const breakTakenMs = calculateBreakTaken();
+      const breakTakenEl = document.getElementById("breakTaken");
+      breakTakenEl.textContent = formatHMS(breakTakenMs);
+
+      // BREAK REQUIREMENT
+      const requiredMinutes = getBreakRequirementMinutes(elapsedMs);
+      const requiredMs = requiredMinutes * 60 * 1000;
+
+      breakTakenEl.classList.remove("break-ok", "break-low");
+      if (breakTakenMs >= requiredMs) {
+        breakTakenEl.classList.add("break-ok");
+      } else {
+        breakTakenEl.classList.add("break-low");
+      }
+
+      // SINCE LAST BREAK
+      const sinceLastBreakMs = calculateTimeSinceLastBreak(now);
+      const sinceEl = document.getElementById("sinceLastBreak");
+      sinceEl.textContent = formatHMS(sinceLastBreakMs);
+
+      sinceEl.classList.remove("good", "warning", "danger");
+
+      if (sinceLastBreakMs < 5 * 60 * 60 * 1000) {
+        sinceEl.classList.add("good");
+      } else if (sinceLastBreakMs < 5.5 * 60 * 60 * 1000) {
+        sinceEl.classList.add("warning");
+      } else {
+        sinceEl.classList.add("danger");
+      }
+
+      // Update break requirement number
+      const breakReqEl = document.getElementById("breakRequirementNumber");
+      breakReqEl.textContent = `${requiredMinutes} minutes`;
+
+      // Remove old colours
+      breakReqEl.classList.remove("break-req-green", "break-req-red");
+
+      // Compare actual vs required
+      if (breakTakenMs >= requiredMinutes * 60 * 1000) {
+        breakReqEl.classList.add("break-req-green");
+      } else {
+        breakReqEl.classList.add("break-req-red");
+      }
+
+      // Hour thresholds (6, 9, 12, 15)
+      const thresholds = [
+        { hours: 6, id: "sixHour" },
+        { hours: 9, id: "nineHour" },
+        { hours: 12, id: "twelveHour" },
+        { hours: 15, id: "fifteenHour" }
+      ];
+
+      thresholds.forEach(t => {
+        const limit = t.hours * 3600000;
+        const left = limit - elapsedMs;
+        const el = document.getElementById(t.id);
+
+        el.textContent = left > 0 ? formatHMS(left) : "00:00:00";
+
+        el.classList.remove("good", "warning", "danger");
+        if (left <= 0) el.classList.add("danger");
+        else if (left < 60 * 60 * 1000) el.classList.add("warning");
+        else el.classList.add("good");
+      });
+
+    }, 1000);
+  }
+
+  // START / END SHIFT
+
+  function startShift() {
+    startTime = Date.now();
+    localStorage.setItem("shiftStartTime", startTime);
+
+    breakLog = [];
+    currentBreakStart = null;
+
+    localStorage.setItem("breakLog", JSON.stringify(breakLog));
+    localStorage.removeItem("currentBreakStart");
+
+    updateBreakButtons();
+    startTimers();
+
+    const btn = document.getElementById("startShiftBtn");
+    btn.textContent = "End Shift";
+    btn.classList.add("end-shift");
+  }
+
+  function confirmEndShift() {
+    document.getElementById("endShiftModal").style.display = "flex";
+  }
+
+  function endShift() {
+    startTime = null;
+    breakLog = [];
+    currentBreakStart = null;
+
+    localStorage.removeItem("shiftStartTime");
+    localStorage.removeItem("breakLog");
+    localStorage.removeItem("currentBreakStart");
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+
+    document.getElementById("elapsed").textContent = "00:00:00";
+    document.getElementById("currentBreak").textContent = "00:00:00";
+    document.getElementById("breakTaken").textContent = "00:00:00";
+    document.getElementById("sinceLastBreak").textContent = "00:00:00";
+
+    ["sixHour", "nineHour", "twelveHour", "fifteenHour"].forEach(id => {
+      document.getElementById(id).textContent = "00:00:00";
+    });
+
+    document.getElementById("breakRequirementNumber").textContent = "0 minutes";
+
+    const colourIds = [
+      "elapsed",
+      "currentBreak",
+      "breakTaken",
+      "sinceLastBreak",
+      "sixHour",
+      "nineHour",
+      "twelveHour",
+      "fifteenHour"
+    ];
+
+    colourIds.forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove("good", "warning", "danger", "break-ok", "break-low");
+    });
+
+    const btn = document.getElementById("startShiftBtn");
+    btn.textContent = "Start Shift";
+    btn.classList.remove("end-shift");
+
+    updateBreakButtons();
+  }
+
+  // BREAK BUTTONS
+  document.getElementById("startBreakBtn").addEventListener("click", () => {
+    if (!startTime) return;
+    if (!currentBreakStart) {
+      currentBreakStart = Date.now();
+      localStorage.setItem("currentBreakStart", currentBreakStart);
+      updateBreakButtons();
+    }
+  });
+
+  document.getElementById("endBreakBtn").addEventListener("click", () => {
+    if (!startTime) return;
+    if (currentBreakStart) {
+      const end = Date.now();
+      const duration = end - currentBreakStart;
+
+      if (duration >= 15 * 60 * 1000) {
+        breakLog.push({ start: currentBreakStart, end });
+        localStorage.setItem("breakLog", JSON.stringify(breakLog));
+      }
+
+      currentBreakStart = null;
+      localStorage.removeItem("currentBreakStart");
+
+      updateBreakButtons();
+    }
+  });
+
+  // START SHIFT BUTTON TOGGLE
+  const startShiftBtn = document.getElementById("startShiftBtn");
+  startShiftBtn.addEventListener("click", () => {
+    if (!startTime) {
+      startShift();
+    } else {
+      confirmEndShift();
+    }
+  });
+
+  // END SHIFT EVENT LISTENERS
+  document.getElementById("cancelEndShift").addEventListener("click", () => {
+    document.getElementById("endShiftModal").style.display = "none";
+  });
+
+  document.getElementById("confirmEndShift").addEventListener("click", () => {
+    document.getElementById("endShiftModal").style.display = "none";
+    endShift();
+  });
+
+  // Open info modal
+  document.getElementById("breakInfoBtn").addEventListener("click", () => {
+    document.getElementById("breakInfoModal").style.display = "flex";
+  });
+
+  // Close info modal
+  document.getElementById("closeBreakInfo").addEventListener("click", () => {
+    document.getElementById("breakInfoModal").style.display = "none";
+  });
+
+  // Optional: close by tapping outside
+  document.getElementById("breakInfoModal").addEventListener("click", (e) => {
+    if (e.target.id === "breakInfoModal") {
+      document.getElementById("breakInfoModal").style.display = "none";
+    }
+  });
+
+  // INITIALISE UI ON LOAD
+  if (startTime) {
+    startShiftBtn.textContent = "End Shift";
+    startShiftBtn.classList.add("end-shift");
+    startTimers();
+  } else {
+    startShiftBtn.textContent = "Start Shift";
+    startShiftBtn.classList.remove("end-shift");
+  }
+
+  updateBreakButtons();
+})();
+</script>
+
+</body>
+</html>
