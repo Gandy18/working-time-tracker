@@ -10,6 +10,9 @@
     <!-- ===================================== -->
 
     <style>
+      /* --------------------------------------------------
+        THEME VARIABLES
+      -------------------------------------------------- */
       :root {
         --bg-color: #f4f4f4;
         --card-bg: #ffffff;
@@ -30,11 +33,9 @@
         --break-banner-text: #000000;
 
         --green-ok: #238823;
-        --yellow-warn: #ffbf00;
+        /* --yellow-warn: #ffbf00; */
+        --yellow-warn: #f6ba07;
         --red-danger: #d2222d;
-        --green-ok-dark: #2e7d32;
-        --yellow-warn-dark: #f9a825;
-        --red-danger-dark: #e53935;
       }
 
       :root.dark {
@@ -61,6 +62,9 @@
         --red-danger: #e53935;
       }
 
+      /* --------------------------------------------------
+        GLOBAL
+      -------------------------------------------------- */
       * {
         box-sizing: border-box;
       }
@@ -79,7 +83,6 @@
         transition:
           background 0.2s ease,
           color 0.2s ease;
-
         max-width: 100vw;
         overflow-x: hidden;
       }
@@ -89,6 +92,9 @@
         margin: 0 auto;
       }
 
+      /* --------------------------------------------------
+        HEADER + THEME TOGGLE
+      -------------------------------------------------- */
       header {
         display: flex;
         align-items: center;
@@ -109,7 +115,6 @@
         position: relative;
         cursor: pointer;
         transition: background 0.25s ease;
-        flex-shrink: 0;
       }
 
       .toggle-thumb {
@@ -133,6 +138,9 @@
         left: 25px;
       }
 
+      /* --------------------------------------------------
+        CARDS + TEXT
+      -------------------------------------------------- */
       .card {
         display: flex;
         flex-direction: column;
@@ -160,21 +168,29 @@
       .label-heading {
         font-size: 16px;
         font-weight: 700;
-        margin-bottom: 0;
+        margin: 0;
         text-align: center;
+      }
+
+      .label-heading-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 0;
+        align-self: center;
       }
 
       .value {
         font-size: 28px;
         font-weight: 600;
         margin-bottom: 8px;
-        word-spacing: 2px;
       }
 
       .big-number {
         font-size: 40px;
         font-weight: 700;
-        margin: 0 0 0 0;
+        margin: 0;
         text-align: center;
       }
 
@@ -186,11 +202,17 @@
         text-align: center;
       }
 
+      /* --------------------------------------------------
+        BUTTONS
+      -------------------------------------------------- */
       .button-row {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
       }
+
+      /* Keep the summary button unchanged (fit-content) */
+      .summary-btn { width: fit-content; padding-left: 20px; padding-right: 20px; }
 
       button {
         padding: 10px 14px;
@@ -205,16 +227,20 @@
         justify-content: center;
         text-align: center;
         white-space: nowrap;
-        transition:
-          background 0.15s ease,
-          transform 0.1s ease,
-          box-shadow 0.15s ease;
+        transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
         box-shadow: 0 2px 6px var(--shadow-color);
       }
 
       button:active {
         transform: scale(0.97);
-        box-shadow: 0 1px 3px var(--shadow-color);
+      }
+
+      .active-break { 
+        background: #ccc !important; 
+        color: #000 !important; 
+        border: none !important; 
+        font-size: 15px; 
+        font-weight: 500; 
       }
 
       button:disabled {
@@ -238,82 +264,62 @@
       .btn-grey {
         background: #ccc;
         color: #000;
-        border: none;
-        padding: 10px 16px;
         border-radius: 6px;
+        padding: 10px 16px;
         font-size: 15px;
         font-weight: 500;
       }
 
-      .good {
-        color: var(--green-ok);
-      }
-      .warning {
-        color: var(--yellow-warn);
-      }
-      .danger {
-        color: var(--red-danger);
+      .end-shift {
+        background: #cb3d3a;
+        color: #fff;
       }
 
-      .break-banner {
-        background: var(--break-banner-bg);
-        color: var(--break-banner-text);
-        padding: 10px;
-        text-align: center;
-        border-radius: 10px;
-        margin-bottom: 14px;
-        font-weight: 600;
-        box-shadow: 0 2px 6px var(--shadow-color);
+      /* --------------------------------------------------
+        BREAK BANNER
+      -------------------------------------------------- */
+      .break-banner { 
+        background: var(--break-banner-bg); 
+        color: var(--break-banner-text); 
+        padding: 10px; 
+        border-radius: 10px; 
+        margin-bottom: 14px; 
+        font-weight: 600; 
+        box-shadow: 0 2px 6px var(--shadow-color); 
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .break-center { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 8px; 
+        width: 100%; 
+        box-sizing: border-box; 
+        max-width: 640px; 
+      }
+      
+      .break-text { 
+        display: inline-flex; 
+        align-items: center; 
+        white-space: nowrap; 
+      } 
+      
+      .break-icon-img { 
+        width: 24px;
+        height: 24px; 
+        object-fit: contain; 
+        display: inline-block; 
       }
 
-      .break-ok {
-        color: var(--green-ok);
-      }
-
-      .break-low {
-        color: var(--red-danger);
-      }
-
-      .timer-block {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .pause-icon {
-        width: 18px;
-        height: 18px;
-        display: inline-block;
-        vertical-align: -3px;
-        margin-right: 6px;
-        background: #ffffff;
-        border-radius: 4px;
-        position: relative;
-      }
-
-      .pause-icon::before,
-      .pause-icon::after {
-        content: "";
-        position: absolute;
-        top: 3px;
-        bottom: 3px;
-        width: 4px;
-        background: #000; /* pause lines */
-        border-radius: 2px;
-      }
-
-      .pause-icon::before {
-        left: 4px;
-      }
-
-      .pause-icon::after {
-        right: 4px;
-      }
-
+      /* --------------------------------------------------
+        TIME GRID
+      -------------------------------------------------- */
       .time-grid {
         display: flex;
         justify-content: center;
-        flex-direction: row;
         gap: 24px;
       }
 
@@ -334,30 +340,42 @@
         font-size: 26px;
       }
 
-      .end-shift {
-        background: #cb3d3a;
-        color: #fff;
-      }
-
+      /* --------------------------------------------------
+        PROGRESS BAR
+      -------------------------------------------------- */
       .progress-container {
         width: 100%;
         height: 10px;
-        background: var(--card-bg-alt, #e0e0e0);
+        background: #ddd;
         border-radius: 6px;
         overflow: hidden;
         margin-top: 12px;
+        position: relative;
       }
 
       .progress-bar {
         height: 100%;
         width: 0%;
-        background: var(--accent-color, #0078ff);
+        background: var(--accent-color);
         transition: width 0.4s ease;
+      }
+
+      .progress-splits {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .progress-splits span {
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        background: #888;
+        transform: translateX(-0.5px);
       }
 
       .progress-markers {
         position: relative;
-        width: 100%;
         height: 16px;
         margin-top: 4px;
       }
@@ -367,56 +385,13 @@
         transform: translateX(-50%);
         font-size: 12px;
         color: var(--subtext-color);
-        top: 0;
-        white-space: nowrap;
-        pointer-events: none;
       }
 
-      .progress-container {
-        position: relative;
-        width: 100%;
-        height: 10px;
-        background: #ddd;
-        border-radius: 6px;
-        overflow: hidden;
-        margin-top: 12px;
-      }
+      /* --------------------------------------------------
+        UNIFIED MODAL SYSTEM (OLD VISUAL STYLE)
+      -------------------------------------------------- */
 
-      .progress-bar {
-        height: 100%;
-        width: 0%;
-        background: #0078ff;
-        transition: width 0.4s ease;
-      }
-
-      .progress-splits {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        pointer-events: none;
-      }
-
-      .progress-splits span {
-        position: absolute;
-        top: 0;
-        width: 2px;
-        height: 100%;
-        background: #888;
-        transform: translateX(-0.5px);
-      }
-
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 999;
-      }
-
+      /* Modal box */
       .modal {
         background: var(--card-bg);
         color: var(--text-color);
@@ -428,6 +403,7 @@
         text-align: center;
       }
 
+      /* Buttons inside modals */
       .modal-buttons {
         display: flex;
         justify-content: space-between;
@@ -444,8 +420,9 @@
       }
 
       .modal-btn.cancel {
-        background: #ccc;
-        color: #000;
+        background: var(--accent-color);
+        color: var(--button-text);
+        border: none; 
       }
 
       .modal-btn.confirm {
@@ -453,14 +430,127 @@
         color: #fff;
       }
 
-      .break-timer-red {
-        color: var(--red-danger);
+      /* Ensure modal overlay is centered and hidden by default */
+      .modal-overlay { 
+        display: none; 
+        position: fixed; 
+        inset: 0; 
+        background: rgba(0,0,0,0.5); 
+        justify-content: center; 
+        align-items: center; 
+        z-index: 999; 
       }
 
-      .break-timer-green {
-        color: var(--green-ok);
+      /* Compact modal action buttons (match working file) */
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        justify-content: center;
+        align-items: center;
       }
 
+      /* Default modal action button sizing (compact) */
+      .modal-buttons .modal-btn {
+        flex: 0 1 auto;        /* don't force full width */
+        min-width: 110px;      /* keeps buttons readable on small screens */
+        padding: 8px 12px;     /* compact padding */
+        border-radius: 8px;    /* same rounded look as summary button */
+        font-size: 15px;
+        font-weight: 600;
+        box-shadow: 0 2px 6px var(--shadow-color);
+      }
+
+      /* Grey primary-like button (same as summary) */
+      .modal-btn.btn-grey {
+        background: #ccc;
+        color: #000;
+        border: none;
+      }
+
+      /* Confirm / danger button compact style */
+      .modal-btn.confirm {
+        background: #cb3d3a;
+        color: #fff;
+        border: none;
+      }
+
+      /* Keep the cancel full-width row unchanged */
+      .modal-cancel-row { margin-top: 12px; display: flex; }
+      .modal-cancel-row .modal-btn { width: 100%; padding: 10px 14px; }
+
+      /* Small-screen fallback: allow wrapping but keep compact buttons */
+      @media (max-width: 420px) {
+        .modal-buttons { flex-wrap: wrap; gap: 8px; }
+        .modal-buttons .modal-btn { min-width: 100px; flex: 1 1 45%; }
+        .modal-cancel-row .modal-btn { padding: 10px 12px; }
+      }
+
+      /* Buttons row for save options */
+      .save-options-row { 
+        display: flex; 
+        flex-wrap: wrap; 
+        gap: 10px; 
+        justify-content: center; 
+        margin-top: 12px; 
+      }
+      .save-options-row .modal-btn { 
+        flex: 1 1 45%; 
+        min-width: 140px; 
+      }
+
+      /* Cancel row: full width button at bottom */
+      .modal-cancel-row { 
+        margin-top: 14px; 
+        display: flex; 
+      }
+      .modal-cancel-row .modal-btn { 
+        width: 100%; 
+      }
+
+      /* Utility class for full width button */
+      .full-width { 
+        width: 100%; 
+      }
+
+      /* Visual tweaks */
+      .modal-btn { 
+        padding: 10px 12px; 
+        border-radius: 8px; 
+        font-size: 15px; 
+      }
+
+      /* Full-width cancel row for consistency with Save Options modal */
+      .modal-cancel-row { margin-top: 12px; display: flex; }
+      .modal-cancel-row .modal-btn { width: 100%; }
+
+      /* Utility class used elsewhere */
+      .full-width { width: 100%; }
+
+      /* Ensure modal-buttons layout for save/delete matches other modals */
+      .save-delete-row { display:flex; gap:10px; margin-top:12px; }
+      .save-delete-row .modal-btn { flex: 1; }
+
+      /* Make summary modal scrollable when content is long */
+      #summaryModal .modal {
+        max-height: 80vh;        /* modal never exceeds screen height */
+        overflow-y: auto;        /* scrolls internally */
+        padding-bottom: 20px;    /* keeps bottom spacing comfortable */
+      }
+
+      /* Small-screen fallback: stack save/delete vertically under 420px */
+      @media (max-width: 420px) {
+        .save-delete-row { flex-direction: column; gap: 8px; }
+      }
+
+      /* Small-screen behaviour: stack save options vertically under 420px */
+      @media (max-width: 420px) {
+        .save-options-row .modal-btn { flex: 1 1 100%; min-width: 0; }
+      }
+
+      /* --------------------------------------------------
+        INFO BUTTON
+      -------------------------------------------------- */
       .info-btn {
         background: var(--btn-secondary-bg);
         border: 1px solid var(--accent-color);
@@ -470,25 +560,55 @@
         height: 22px;
         font-size: 14px;
         font-weight: 700;
-        flex: 0 0 auto; /* prevents flex stretching */
         display: inline-flex;
         align-items: center;
         justify-content: center;
         padding: 0;
         line-height: 1;
+        flex: 0 0 auto; /* prevent stretching, match old behaviour */
       }
 
-      .label-heading-row {
+      /* --------------------------------------------------
+        SUMMARY BUTTON
+      -------------------------------------------------- */
+      .summary-row {
         display: flex;
-        align-items: center;
         justify-content: center;
-        gap: 6px;
-        margin-bottom: 0;
+        margin-top: 8px;
       }
 
-      .label-heading {
-        font-size: 16px;
-        font-weight: 700;
+      .summary-btn {
+        margin-top: 12px;
+        width: fit-content;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      /* --------------------------------------------------
+        STATUS COLOURS
+      -------------------------------------------------- */
+      .good {
+        color: var(--green-ok);
+      }
+      .warning {
+        color: var(--yellow-warn);
+      }
+      .danger {
+        color: var(--red-danger);
+      }
+
+      .break-ok {
+        color: var(--green-ok);
+      }
+      .break-low {
+        color: var(--red-danger);
+      }
+
+      .break-timer-red {
+        color: var(--red-danger);
+      }
+      .break-timer-green {
+        color: var(--green-ok);
       }
 
       .break-req-green {
@@ -499,25 +619,10 @@
         color: var(--red-danger);
       }
 
-      .summary-btn {
-        margin-top: 12px;
-        width: fit-content;
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-
-      .summary-row {
+      .break-center {
         display: flex;
-        justify-content: center;
-        margin-top: 8px;
-      }
-
-      .active-break {
-        background: #ccc !important;
-        color: #000 !important;
-        border: none !important;
-        font-size: 15px;
-        font-weight: 500;
+        align-items: center;
+        gap: 8px;
       }
     </style>
   </head>
@@ -533,7 +638,10 @@
       </header>
 
       <div id="breakBanner" class="break-banner" style="display: none">
-        <span class="pause-icon"></span> Break in progress
+        <div class="break-center">
+          <span class="break-text">BREAK IN PROGRESS</span>
+          <img src="assets/stopwatch.png" class="break-icon-img" alt="">
+        </div>
       </div>
 
       <div class="card">
@@ -624,16 +732,36 @@
         <span style="left: 100%">15h</span>
       </div>
 
+      <!-- End / Save or Delete modal -->
       <div id="endShiftModal" class="modal-overlay">
         <div class="modal">
-          <h2>End shift</h2>
-          <p>This will clear all timers. Are you sure?</p>
+          <h2>Save or Delete Shift Data</h2>
+          <p>Do you want to save the data for this shift or delete the data and reset timers?</p>
 
-          <div class="modal-buttons">
-            <button id="cancelEndShift" class="modal-btn cancel">Cancel</button>
-            <button id="confirmEndShift" class="modal-btn confirm">
-              End shift
-            </button>
+          <div class="modal-buttons save-delete-row">
+            <button id="saveShiftBtn" class="modal-btn btn-grey">Save</button>
+            <button id="deleteShiftBtn" class="modal-btn confirm">Delete</button>
+          </div>
+
+          <div class="modal-cancel-row">
+            <button id="cancelEndShiftModal" class="modal-btn cancel full-width">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="saveOptionsModal" class="modal-overlay">
+        <div class="modal">
+          <h2>Save Shift Data</h2>
+          <p>Choose how you'd like to save your shift summary:</p>
+
+          <div class="modal-buttons save-options-row">
+            <button id="saveEmail" class="modal-btn btn-grey">Email</button>
+            <button id="saveWhatsApp" class="modal-btn btn-grey">WhatsApp</button>
+            <button id="saveTextFile" class="modal-btn btn-grey">Text File</button>
+          </div>
+
+          <div class="modal-cancel-row">
+            <button id="closeSaveOptions" class="modal-btn cancel full-width">Cancel</button>
           </div>
         </div>
       </div>
@@ -671,8 +799,6 @@
             <button id="summaryClose" class="modal-btn cancel">Close</button>
           </div>
         </div>
-      </div>
-    </div>
 
     <!-- ===================================== -->
     <!--            JAVASCRIPT START           -->
@@ -708,6 +834,7 @@
 
         // STATE
         let startTime = Number(localStorage.getItem("shiftStartTime")) || null;
+        let shiftEndTime = null;
         let breakLog = JSON.parse(localStorage.getItem("breakLog") || "[]");
         let currentBreakStart =
           Number(localStorage.getItem("currentBreakStart")) || null;
@@ -748,6 +875,25 @@
 
             banner.style.display = "none";
           }
+        }
+
+        // Helper: ordinal suffix for day numbers
+        function dayOrdinal(n) {
+          const s = ["th","st","nd","rd"];
+          const v = n % 100;
+          return n + (s[(v-20)%10] || s[v] || s[0]);
+        }
+
+        // Helper: format date like "Tue 10th Feb 2026"
+        function formatDateWithOrdinal(ms) {
+          if (!ms) return "--";
+          const d = new Date(ms);
+          // weekday and month short names from locale
+          const weekday = d.toLocaleDateString("en-GB", { weekday: "short" }); // e.g. "Tue"
+          const month = d.toLocaleDateString("en-GB", { month: "short" });     // e.g. "Feb"
+          const year = d.getFullYear();                                        // e.g. 2026
+          const dayWithOrd = dayOrdinal(d.getDate());                          // e.g. "10th"
+          return `${weekday} ${dayWithOrd} ${month} ${year}`;                  // "Tue 10th Feb 2026"
         }
 
         function formatHMS(ms) {
@@ -823,6 +969,7 @@
             );
 
             if (currentBreakMs === 0) {
+              // no break
             } else if (currentBreakMs < 15 * 60 * 1000) {
               currentBreakEl.classList.add("break-timer-red");
             } else {
@@ -900,6 +1047,8 @@
           breakLog = [];
           currentBreakStart = null;
 
+          shiftEndTime = null;
+
           localStorage.setItem("breakLog", JSON.stringify(breakLog));
           localStorage.removeItem("currentBreakStart");
 
@@ -968,6 +1117,164 @@
           updateBreakButtons();
         }
 
+        // TEXT SUMMARY FOR SAVE OPTIONS
+        function formatTime24(ms) {
+          if (!ms) return "--:--";
+          const d = new Date(ms);
+          return d.toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        }
+
+        function formatDuration(ms) {
+          if (!ms) return "--:--";
+          const mins = Math.floor(ms / 60000);
+          const secs = Math.floor((ms % 60000) / 1000);
+          return `${String(mins).padStart(2, "0")}:${String(secs).padStart(
+            2,
+            "0",
+          )}`;
+        }
+
+        function formatHM(ms) {
+          if (!ms) return "--:--";
+          const totalMinutes = Math.floor(ms / 60000);
+          const h = Math.floor(totalMinutes / 60);
+          const m = totalMinutes % 60;
+          return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+        }
+
+        function ordinal(n) {
+          return n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : `${n}th`;
+        }
+
+        function generateShiftTextSummary() {
+          let text = "";
+
+          // SHIFT START
+          text += `Shift Start Date: ${
+            startTime ? formatDateWithOrdinal(startTime) : "--"
+          }\n`;
+          text += `Shift Start Time: ${
+            startTime ? formatTime24(startTime) : "--:--"
+          }\n\n`;
+
+          // BREAKS
+          if (breakLog.length === 0) {
+            text += `1st Break:\nStart: --:--\nFinish: --:--\nDuration (mm:ss): --:--\n\n`;
+          } else {
+            breakLog.forEach((b, i) => {
+              const duration = b.end - b.start;
+              text += `${ordinal(i + 1)} Break:\n`;
+              text += `Start: ${formatTime24(b.start)}\n`;
+              text += `Finish: ${formatTime24(b.end)}\n`;
+              text += `Duration (mm:ss): ${formatDuration(duration)}\n\n`;
+            });
+          }
+
+          // SHIFT END (only if user ended the shift)
+          if (shiftEndTime) {
+            text += `Shift End Date: ${formatDateWithOrdinal(shiftEndTime)}\n`;
+            text += `Shift End Time: ${formatTime24(shiftEndTime)}\n\n`;
+          }
+
+          // TOTAL WORKED MINUS BREAKS
+          const now = Date.now();
+          const totalWorkedMs = startTime ? now - startTime : 0;
+          const totalBreakMs = breakLog.reduce(
+            (sum, b) => sum + (b.end - b.start),
+            0
+          );
+
+          const workedMinusBreaks = totalWorkedMs - totalBreakMs;
+
+          text += `Total Time Worked (minus breaks): ${formatHM(
+            workedMinusBreaks
+          )} (hh:mm)\n`;
+
+          return text;
+        }
+
+        // SAVE / DELETE MODAL LOGIC
+        document
+          .getElementById("saveShiftBtn")
+          .addEventListener("click", () => {
+            shiftEndTime = Date.now();
+            document.getElementById("endShiftModal").style.display = "none";
+            document.getElementById("saveOptionsModal").style.display = "flex";
+          });
+
+        document
+          .getElementById("deleteShiftBtn")
+          .addEventListener("click", () => {
+            shiftEndTime = Date.now();
+            document.getElementById("endShiftModal").style.display = "none";
+            endShift();
+          });
+
+        // SAVE OPTIONS
+        // Email
+        document.getElementById("saveEmail").addEventListener("click", () => { 
+          const body = encodeURIComponent(generateShiftTextSummary()); 
+          window.location.href = `mailto:?subject=Shift Summary&body=${body}`; 
+          // Close save options and return to Save/Delete modal 
+          document.getElementById("saveOptionsModal").style.display = "none"; 
+          document.getElementById("endShiftModal").style.display = "flex"; });
+
+        // Whatsapp
+        document.getElementById("saveWhatsApp").addEventListener("click", () => { 
+          const msg = encodeURIComponent(generateShiftTextSummary()); 
+          window.open(`https://wa.me/?text=${msg}`);
+          // Close save options and return to Save/Delete modal
+          document.getElementById("saveOptionsModal").style.display = "none"; 
+          document.getElementById("endShiftModal").style.display = "flex"; });
+
+        // Text File
+        document.getElementById("saveTextFile").addEventListener("click", () => {
+          // Format date for filename
+          const d = new Date(startTime);   // shift start date
+          const weekday = d.toLocaleDateString("en-GB", { weekday: "short" });
+          const month = d.toLocaleDateString("en-GB", { month: "short" });
+          const day = d.getDate();
+
+          // ordinal helper
+          function ordinal(n) {
+            return n === 1 ? "1st" :
+                  n === 2 ? "2nd" :
+                  n === 3 ? "3rd" : `${n}th`;
+          }
+
+          const formattedDate = `${weekday}_${ordinal(day)}_${month}_${d.getFullYear()}`;
+
+          const filename = `shift_data_${formattedDate}.txt`;
+
+          // Create file
+          const blob = new Blob([generateShiftTextSummary()], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          // Close save options and return to Save/Delete modal
+          document.getElementById("saveOptionsModal").style.display = "none";
+          document.getElementById("endShiftModal").style.display = "flex";
+        });
+
+        document
+          .getElementById("closeSaveOptions")
+          .addEventListener("click", () => {
+            document.getElementById("saveOptionsModal").style.display = "none";
+          });
+
+        // Close the Save/Delete modal without taking action
+        document.getElementById("cancelEndShiftModal").addEventListener("click", () => {
+          shiftEndTime = null;
+          document.getElementById("endShiftModal").style.display = "none";
+        });
+
         // BREAK BUTTONS
         document
           .getElementById("startBreakBtn")
@@ -1008,21 +1315,7 @@
           }
         });
 
-        // END SHIFT EVENT LISTENERS
-        document
-          .getElementById("cancelEndShift")
-          .addEventListener("click", () => {
-            document.getElementById("endShiftModal").style.display = "none";
-          });
-
-        document
-          .getElementById("confirmEndShift")
-          .addEventListener("click", () => {
-            document.getElementById("endShiftModal").style.display = "none";
-            endShift();
-          });
-
-        // INFO MODAL
+        // BREAK INFO MODAL
         document
           .getElementById("breakInfoBtn")
           .addEventListener("click", () => {
@@ -1043,50 +1336,7 @@
             }
           });
 
-        // INITIALISE UI
-        if (startTime) {
-          startShiftBtn.textContent = "End Shift";
-          startShiftBtn.classList.add("end-shift");
-          startTimers();
-        } else {
-          startShiftBtn.textContent = "Start Shift";
-          startShiftBtn.classList.remove("end-shift");
-        }
-
-        updateBreakButtons();
-
-        /* ---------------------------
-        SUMMARY MODAL (INSIDE IIFE)
-      ---------------------------- */
-
-        function formatTime24(ms) {
-          if (!ms) return "--:--";
-          const d = new Date(ms);
-          return d.toLocaleTimeString("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-        }
-
-        function formatDuration(ms) {
-          if (!ms) return "--:--";
-          const mins = Math.floor(ms / 60000);
-          const secs = Math.floor((ms % 60000) / 1000);
-          return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-        }
-
-        function formatHM(ms) {
-          if (!ms) return "--:--";
-          const totalMinutes = Math.floor(ms / 60000);
-          const h = Math.floor(totalMinutes / 60);
-          const m = totalMinutes % 60;
-          return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-        }
-
-        function ordinal(n) {
-          return n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : `${n}th`;
-        }
-
+        // SUMMARY MODAL
         function updateSummaryModal() {
           const container = document.getElementById("summaryContent");
           container.innerHTML = "";
@@ -1096,12 +1346,23 @@
 
           let totalBreakMs = 0;
 
-          // SHIFT START TIME
+          // SHIFT START TIME + DATE
           container.innerHTML += `
-            <h3>Shift Start Time</h3>
-            <p>${startTime ? formatTime24(startTime) : "--:--"}</p>
+            <h3>Shift Start</h3>
+            <p>Date: ${startTime ? formatDateWithOrdinal(startTime) : "--"}</p>
+            <p>Time: ${startTime ? formatTime24(startTime) : "--:--"}</p>
             <hr>
           `;
+
+          // SHIFT END (only shown if user actually ended the shift)
+          if (shiftEndTime) {
+            container.innerHTML += `
+              <h3>Shift End</h3>
+              <p>Date: ${formatDateWithOrdinal(shiftEndTime)}</p>
+              <p>Time: ${formatTime24(shiftEndTime)}</p>
+              <hr>
+            `;
+          }
 
           // BREAKS
           if (breakLog.length === 0) {
@@ -1109,7 +1370,7 @@
               <h3>1st Break</h3>
               <p>Start Time: --:--</p>
               <p>Finish Time: --:--</p>
-              <p>Duration: --:--</p>
+              <p>Duration (mm:ss): --:--</p>
               <hr>
             `;
           } else {
@@ -1152,6 +1413,18 @@
               document.getElementById("summaryModal").style.display = "none";
             }
           });
+
+        // INITIALISE UI
+        if (startTime) {
+          startShiftBtn.textContent = "End Shift";
+          startShiftBtn.classList.add("end-shift");
+          startTimers();
+        } else {
+          startShiftBtn.textContent = "Start Shift";
+          startShiftBtn.classList.remove("end-shift");
+        }
+
+        updateBreakButtons();
       })();
     </script>
   </body>
