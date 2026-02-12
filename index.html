@@ -4,11 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Working Time Tracker</title>
-
-    <!-- ===================================== -->
-    <!--               CSS START               -->
-    <!-- ===================================== -->
-
     <style>
       /* --------------------------------------------------
         THEME VARIABLES
@@ -33,7 +28,6 @@
         --break-banner-text: #000000;
 
         --green-ok: #238823;
-        /* --yellow-warn: #ffbf00; */
         --yellow-warn: #f6ba07;
         --red-danger: #d2222d;
       }
@@ -211,8 +205,11 @@
         gap: 8px;
       }
 
-      /* Keep the summary button unchanged (fit-content) */
-      .summary-btn { width: fit-content; padding-left: 20px; padding-right: 20px; }
+      .summary-btn { 
+        width: fit-content;
+        padding-left: 20px; 
+        padding-right: 20px; 
+      }
 
       button {
         padding: 10px 14px;
@@ -388,10 +385,8 @@
       }
 
       /* --------------------------------------------------
-        UNIFIED MODAL SYSTEM (OLD VISUAL STYLE)
+        UNIFIED MODAL SYSTEM
       -------------------------------------------------- */
-
-      /* Modal box */
       .modal {
         background: var(--card-bg);
         color: var(--text-color);
@@ -401,13 +396,6 @@
         max-width: 360px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         text-align: center;
-      }
-
-      /* Buttons inside modals */
-      .modal-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
       }
 
       .modal-btn {
@@ -441,7 +429,7 @@
         z-index: 999; 
       }
 
-      /* Compact modal action buttons (match working file) */
+      /* Compact modal action buttons */
       .modal-buttons {
         display: flex;
         gap: 10px;
@@ -452,23 +440,21 @@
 
       /* Default modal action button sizing (compact) */
       .modal-buttons .modal-btn {
-        flex: 0 1 auto;        /* don't force full width */
-        min-width: 110px;      /* keeps buttons readable on small screens */
-        padding: 8px 12px;     /* compact padding */
-        border-radius: 8px;    /* same rounded look as summary button */
+        flex: 0 1 auto;
+        min-width: 110px;
+        padding: 8px 12px;
+        border-radius: 8px;
         font-size: 15px;
         font-weight: 600;
         box-shadow: 0 2px 6px var(--shadow-color);
       }
 
-      /* Grey primary-like button (same as summary) */
       .modal-btn.btn-grey {
         background: #ccc;
         color: #000;
         border: none;
       }
 
-      /* Confirm / danger button compact style */
       .modal-btn.confirm {
         background: #cb3d3a;
         color: #fff;
@@ -476,14 +462,29 @@
       }
 
       /* Keep the cancel full-width row unchanged */
-      .modal-cancel-row { margin-top: 12px; display: flex; }
-      .modal-cancel-row .modal-btn { width: 100%; padding: 10px 14px; }
+      .modal-cancel-row { 
+        margin-top: 12px; 
+        display: flex; 
+      }
+
+      .modal-cancel-row .modal-btn { 
+        width: 100%; 
+        padding: 10px 14px; 
+      }
 
       /* Small-screen fallback: allow wrapping but keep compact buttons */
       @media (max-width: 420px) {
-        .modal-buttons { flex-wrap: wrap; gap: 8px; }
-        .modal-buttons .modal-btn { min-width: 100px; flex: 1 1 45%; }
-        .modal-cancel-row .modal-btn { padding: 10px 12px; }
+        .modal-buttons { 
+          flex-wrap: wrap; 
+          gap: 8px; 
+        }
+        .modal-buttons .modal-btn { 
+          min-width: 100px; 
+          flex: 1 1 45%; 
+        }
+        .modal-cancel-row .modal-btn { 
+          padding: 10px 12px; 
+        }
       }
 
       /* Buttons row for save options */
@@ -521,15 +522,19 @@
       }
 
       /* Full-width cancel row for consistency with Save Options modal */
-      .modal-cancel-row { margin-top: 12px; display: flex; }
-      .modal-cancel-row .modal-btn { width: 100%; }
-
-      /* Utility class used elsewhere */
-      .full-width { width: 100%; }
+      .modal-cancel-row .modal-btn { 
+        width: 100%; 
+      }
 
       /* Ensure modal-buttons layout for save/delete matches other modals */
-      .save-delete-row { display:flex; gap:10px; margin-top:12px; }
-      .save-delete-row .modal-btn { flex: 1; }
+      .save-delete-row { 
+        display:flex; 
+        gap:10px; 
+        margin-top:12px; 
+      }
+      .save-delete-row .modal-btn { 
+        flex: 1; 
+      }
 
       /* Make summary modal scrollable when content is long */
       #summaryModal .modal {
@@ -540,12 +545,18 @@
 
       /* Small-screen fallback: stack save/delete vertically under 420px */
       @media (max-width: 420px) {
-        .save-delete-row { flex-direction: column; gap: 8px; }
+        .save-delete-row { 
+          flex-direction: column; 
+          gap: 8px; 
+        }
       }
 
       /* Small-screen behaviour: stack save options vertically under 420px */
       @media (max-width: 420px) {
-        .save-options-row .modal-btn { flex: 1 1 100%; min-width: 0; }
+        .save-options-row .modal-btn { 
+          flex: 1 1 100%; 
+          min-width: 0; 
+        }
       }
 
       /* --------------------------------------------------
@@ -565,7 +576,7 @@
         justify-content: center;
         padding: 0;
         line-height: 1;
-        flex: 0 0 auto; /* prevent stretching, match old behaviour */
+        flex: 0 0 auto;
       }
 
       /* --------------------------------------------------
@@ -590,9 +601,11 @@
       .good {
         color: var(--green-ok);
       }
+
       .warning {
         color: var(--yellow-warn);
       }
+
       .danger {
         color: var(--red-danger);
       }
@@ -600,6 +613,7 @@
       .break-ok {
         color: var(--green-ok);
       }
+
       .break-low {
         color: var(--red-danger);
       }
@@ -607,6 +621,7 @@
       .break-timer-red {
         color: var(--red-danger);
       }
+
       .break-timer-green {
         color: var(--green-ok);
       }
@@ -617,12 +632,6 @@
 
       .break-req-red {
         color: var(--red-danger);
-      }
-
-      .break-center {
-        display: flex;
-        align-items: center;
-        gap: 8px;
       }
     </style>
   </head>
@@ -1233,17 +1242,10 @@
         // Text File
         document.getElementById("saveTextFile").addEventListener("click", () => {
           // Format date for filename
-          const d = new Date(startTime);   // shift start date
+          const d = new Date(startTime);
           const weekday = d.toLocaleDateString("en-GB", { weekday: "short" });
           const month = d.toLocaleDateString("en-GB", { month: "short" });
           const day = d.getDate();
-
-          // ordinal helper
-          function ordinal(n) {
-            return n === 1 ? "1st" :
-                  n === 2 ? "2nd" :
-                  n === 3 ? "3rd" : `${n}th`;
-          }
 
           const formattedDate = `${weekday}_${ordinal(day)}_${month}_${d.getFullYear()}`;
 
@@ -1429,5 +1431,3 @@
     </script>
   </body>
 </html>
-
-
