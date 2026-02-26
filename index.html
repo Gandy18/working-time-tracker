@@ -384,6 +384,14 @@
         color: var(--subtext-color);
       }
 
+      .progress-markers span:first-child {
+        left: 1% !important;   /* moves 0h inward */
+      }
+
+      .progress-markers span:last-child {
+        left: 97.5% !important;  /* moves 15h inward */
+      }
+
       /* --------------------------------------------------
         UNIFIED MODAL SYSTEM
       -------------------------------------------------- */
@@ -633,6 +641,23 @@
       .break-req-red {
         color: var(--red-danger);
       }
+
+      #breakProgressBar {
+        background: var(--break-banner-bg);
+      }
+
+      #breakProgressMarkers {
+        margin-bottom: 10px;
+      }
+
+      #breakProgressMarkers span:first-child {
+        left: 2% !important;   /* moves 0m inward */
+      }
+
+      #breakProgressMarkers span:last-child {
+        left: 97.5% !important;  /* moves 45m inward */
+      }
+
     </style>
   </head>
 
@@ -651,6 +676,22 @@
           <span class="break-text">BREAK IN PROGRESS</span>
           <img src="assets/stopwatch.png" class="break-icon-img" alt="">
         </div>
+      </div>
+
+      <div id="breakProgressContainer" class="progress-container" style="display:none; margin-top:10px;">
+        <div class="progress-splits">
+          <span style="left: 33.33%"></span> <!-- 15 min -->
+          <span style="left: 66.66%"></span> <!-- 30 min -->
+          <span style="left: 100%"></span>   <!-- 45 min -->
+        </div>
+        <div id="breakProgressBar" class="progress-bar"></div>
+      </div>
+
+      <div class="progress-markers" id="breakProgressMarkers" style="display:none;">
+        <span style="left: 0%">0m</span>
+        <span style="left: 33.33%">15m</span>
+        <span style="left: 66.66%">30m</span>
+        <span style="left: 100%">45m</span>
       </div>
 
       <div class="card">
@@ -798,6 +839,18 @@
         </div>
       </div>
 
+      <div id="confirmShortBreakModal" class="modal-overlay">
+        <div class="modal">
+          <h2>Are you sure?</h2>
+          <p>The current break has been less than 15 minutes and will not count.</p>
+
+          <div class="modal-buttons">
+            <button id="cancelShortBreak" class="modal-btn cancel">Cancel</button>
+            <button id="confirmShortBreak" class="modal-btn confirm">End Break</button>
+          </div>
+        </div>
+      </div>
+
       <div id="summaryModal" class="modal-overlay">
         <div class="modal">
           <h2>Break Summary</h2>
@@ -875,6 +928,9 @@
             endBtn.classList.add("active-break");
 
             banner.style.display = "block";
+            document.getElementById("breakProgressContainer").style.display = "block"; 
+            document.getElementById("breakProgressMarkers").style.display = "block";
+
           } else {
             startBtn.disabled = false;
             endBtn.disabled = true;
@@ -883,6 +939,8 @@
             endBtn.classList.remove("active-break");
 
             banner.style.display = "none";
+            document.getElementById("breakProgressContainer").style.display = "none"; 
+            document.getElementById("breakProgressMarkers").style.display = "none";
           }
         }
 
@@ -968,22 +1026,18 @@
               formatHMS(elapsedMs);
 
             const currentBreakMs = calculateCurrentBreak(now);
+            // BREAK PROGRESS BAR UPDATE
+            const breakProgressBar = document.getElementById("breakProgressBar");
+            const maxBreakMs = 45 * 60 * 1000; // 45 minutes
+            const pct = Math.min((currentBreakMs / maxBreakMs) * 100, 100);
+            breakProgressBar.style.width = pct + "%";
+
             const currentBreakEl = document.getElementById("currentBreak");
 
             currentBreakEl.textContent = formatHMS(currentBreakMs);
 
-            currentBreakEl.classList.remove(
-              "break-timer-red",
-              "break-timer-green",
-            );
-
-            if (currentBreakMs === 0) {
-              // no break
-            } else if (currentBreakMs < 15 * 60 * 1000) {
-              currentBreakEl.classList.add("break-timer-red");
-            } else {
-              currentBreakEl.classList.add("break-timer-green");
-            }
+            currentBreakEl.textContent = formatHMS(currentBreakMs);
+            currentBreakEl.classList.remove("break-timer-red", "break-timer-green");
 
             const breakTakenMs = calculateBreakTaken();
             const breakTakenEl = document.getElementById("breakTaken");
@@ -1293,21 +1347,19 @@
           });
 
         document.getElementById("endBreakBtn").addEventListener("click", () => {
-          if (!startTime) return;
-          if (currentBreakStart) {
-            const end = Date.now();
-            const duration = end - currentBreakStart;
+          if (!startTime || !currentBreakStart) return;
 
-            if (duration >= 15 * 60 * 1000) {
-              breakLog.push({ start: currentBreakStart, end });
-              localStorage.setItem("breakLog", JSON.stringify(breakLog));
-            }
+          const now = Date.now();
+          const duration = now - currentBreakStart;
 
-            currentBreakStart = null;
-            localStorage.removeItem("currentBreakStart");
-
-            updateBreakButtons();
+          if (duration < 15 * 60 * 1000) {
+            // Show confirmation modal
+            document.getElementById("confirmShortBreakModal").style.display = "flex";
+            return;
           }
+
+          // Normal end-break flow (15+ mins)
+          finishBreak(now);
         });
 
         // START SHIFT BUTTON TOGGLE
@@ -1430,7 +1482,37 @@
         }
 
         updateBreakButtons();
-      })();
+
+
+      function finishBreak(endTime) {
+        const duration = endTime - currentBreakStart;
+
+        if (duration >= 15 * 60 * 1000) {
+          breakLog.push({ start: currentBreakStart, end: endTime });
+          localStorage.setItem("breakLog", JSON.stringify(breakLog));
+        }
+
+        currentBreakStart = null;
+        localStorage.removeItem("currentBreakStart");
+
+        updateBreakButtons();
+      }
+
+      document.getElementById("cancelShortBreak").addEventListener("click", () => {
+        document.getElementById("confirmShortBreakModal").style.display = "none";
+      });
+
+      document.getElementById("confirmShortBreak").addEventListener("click", () => {
+        const end = Date.now();
+        finishBreak(end);
+        document.getElementById("confirmShortBreakModal").style.display = "none";
+      });
+      document.getElementById("confirmShortBreakModal").addEventListener("click", (e) => {
+        if (e.target.id === "confirmShortBreakModal") {
+          document.getElementById("confirmShortBreakModal").style.display = "none";
+        }
+      });
+    })();
     </script>
   </body>
 </html>
