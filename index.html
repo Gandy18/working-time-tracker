@@ -309,6 +309,7 @@
         height: 24px; 
         object-fit: contain; 
         display: inline-block; 
+        margin-bottom: 3px;
       }
 
       /* --------------------------------------------------
@@ -567,6 +568,21 @@
         }
       }
 
+      .modal-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .modal-actions .modal-btn {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
       /* --------------------------------------------------
         INFO BUTTON
       -------------------------------------------------- */
@@ -585,6 +601,8 @@
         padding: 0;
         line-height: 1;
         flex: 0 0 auto;
+        margin-top: 2px;
+        margin-left: 2px;
       }
 
       /* --------------------------------------------------
@@ -788,13 +806,10 @@
           <h2>Save or Delete Shift Data</h2>
           <p>Do you want to save the data for this shift or delete the data and reset timers?</p>
 
-          <div class="modal-buttons save-delete-row">
+          <div class="modal-actions">
             <button id="saveShiftBtn" class="modal-btn btn-grey">Save</button>
             <button id="deleteShiftBtn" class="modal-btn confirm">Delete</button>
-          </div>
-
-          <div class="modal-cancel-row">
-            <button id="cancelEndShiftModal" class="modal-btn cancel full-width">Cancel</button>
+            <button id="cancelEndShiftModal" class="modal-btn cancel">Cancel</button>
           </div>
         </div>
       </div>
@@ -812,6 +827,18 @@
 
           <div class="modal-cancel-row">
             <button id="closeSaveOptions" class="modal-btn cancel full-width">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="confirmDeleteShiftModal" class="modal-overlay">
+        <div class="modal">
+          <h2>Are you sure?</h2>
+          <p>This will reset all timers and delete shift data.</p>
+
+          <div class="modal-buttons">
+            <button id="confirmDeleteShift" class="modal-btn confirm">Delete</button>
+            <button id="cancelDeleteShift" class="modal-btn cancel">Cancel</button>
           </div>
         </div>
       </div>
@@ -845,8 +872,8 @@
           <p>The current break has been less than 15 minutes and will not count.</p>
 
           <div class="modal-buttons">
-            <button id="cancelShortBreak" class="modal-btn cancel">Cancel</button>
             <button id="confirmShortBreak" class="modal-btn confirm">End Break</button>
+            <button id="cancelShortBreak" class="modal-btn cancel">Cancel</button>
           </div>
         </div>
       </div>
@@ -858,6 +885,7 @@
           <div id="summaryContent"></div>
 
           <div class="modal-buttons">
+            <button id="summarySaveShiftBtn" class="modal-btn btn-grey full-width">Save Shift</button>
             <button id="summaryClose" class="modal-btn cancel">Close</button>
           </div>
         </div>
@@ -1228,14 +1256,14 @@
 
           // BREAKS
           if (breakLog.length === 0) {
-            text += `1st Break:\nStart: --:--\nFinish: --:--\nDuration (mm:ss): --:--\n\n`;
+            text += `1st Break:\nStart: --:--\nFinish: --:--\nDuration (mins): --:--\n\n`;
           } else {
             breakLog.forEach((b, i) => {
               const duration = b.end - b.start;
               text += `${ordinal(i + 1)} Break:\n`;
               text += `Start: ${formatTime24(b.start)}\n`;
               text += `Finish: ${formatTime24(b.end)}\n`;
-              text += `Duration (mm:ss): ${formatDuration(duration)}\n\n`;
+              text += `Duration (mins): ${formatDuration(duration)}\n\n`;
             });
           }
 
@@ -1257,7 +1285,7 @@
 
           text += `Total Time Worked (minus breaks): ${formatHM(
             workedMinusBreaks
-          )} (hh:mm)\n`;
+          )} (hours)\n`;
 
           return text;
         }
@@ -1276,8 +1304,14 @@
           .addEventListener("click", () => {
             shiftEndTime = Date.now();
             document.getElementById("endShiftModal").style.display = "none";
-            endShift();
+            document.getElementById("confirmDeleteShiftModal").style.display = "flex";
           });
+        
+        document.getElementById("summarySaveShiftBtn").addEventListener("click", () => {
+          shiftEndTime = Date.now();
+          document.getElementById("summaryModal").style.display = "none";
+          document.getElementById("saveOptionsModal").style.display = "flex";
+        });
 
         // SAVE OPTIONS
         // Email
@@ -1427,7 +1461,7 @@
               <h3>1st Break</h3>
               <p>Start Time: --:--</p>
               <p>Finish Time: --:--</p>
-              <p>Duration (mm:ss): --:--</p>
+              <p>Duration (mins): --:--</p>
               <hr>
             `;
           } else {
@@ -1439,7 +1473,7 @@
                 <h3>${ordinal(i + 1)} Break</h3>
                 <p>Start Time: ${formatTime24(b.start)}</p>
                 <p>Finish Time: ${formatTime24(b.end)}</p>
-                <p>Duration (mm:ss): ${formatDuration(duration)}</p>
+                <p>Duration (mins): ${formatDuration(duration)}</p>
                 <hr>
               `;
             });
@@ -1450,7 +1484,7 @@
 
           container.innerHTML += `
             <h3>Total Time Worked (minus breaks)</h3>
-            <p>(hh:mm): ${formatHM(workedMinusBreaks)}</p>
+            <p>(hours): ${formatHM(workedMinusBreaks)}</p>
           `;
         }
 
@@ -1512,6 +1546,20 @@
           document.getElementById("confirmShortBreakModal").style.display = "none";
         }
       });
+      document.getElementById("cancelDeleteShift").addEventListener("click", () => {
+        document.getElementById("confirmDeleteShiftModal").style.display = "none";
+      });
+
+      document.getElementById("confirmDeleteShift").addEventListener("click", () => {
+        document.getElementById("confirmDeleteShiftModal").style.display = "none";
+        endShift();
+      });
+      document.getElementById("confirmDeleteShiftModal").addEventListener("click", (e) => {
+        if (e.target.id === "confirmDeleteShiftModal") {
+          document.getElementById("confirmDeleteShiftModal").style.display = "none";
+        }
+      });
+
     })();
     </script>
   </body>
