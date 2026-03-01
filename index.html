@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Working Time Tracker</title>
+    <title>HGV Working Time Tracker</title>
     <style>
       /* --------------------------------------------------
         THEME VARIABLES
@@ -682,7 +682,7 @@
   <body>
     <div class="app-container">
       <header>
-        <h2>Working Time Tracker</h2>
+        <h2>HGV Working Time Tracker</h2>
 
         <div id="themeToggle" class="theme-toggle">
           <div class="toggle-thumb">🌙</div>
@@ -1249,8 +1249,8 @@
           // SHIFT START
           text += `Shift Start Date: ${
             startTime ? formatDateWithOrdinal(startTime) : "--"
-          }\n`;
-          text += `Shift Start Time: ${
+          }\n\n`;
+          text += `Start Time: ${
             startTime ? formatTime24(startTime) : "--:--"
           }\n\n`;
 
@@ -1269,8 +1269,8 @@
 
           // SHIFT END (only if user ended the shift)
           if (shiftEndTime) {
-            text += `Shift End Date: ${formatDateWithOrdinal(shiftEndTime)}\n`;
-            text += `Shift End Time: ${formatTime24(shiftEndTime)}\n\n`;
+            text += `Shift End Date: ${formatDateWithOrdinal(shiftEndTime)}\n\n`;
+            text += `End Time: ${formatTime24(shiftEndTime)}\n\n`;
           }
 
           // TOTAL WORKED MINUS BREAKS
